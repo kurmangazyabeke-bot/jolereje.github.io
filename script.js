@@ -147,45 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Mobile Extras Injection (Move Theme/Play to Menu on Mobile)
-        // Check if we need to clone extras into the menu for mobile accessibility
-        const navExtras = navbar.querySelector('.nav-extras');
-        if (navExtras) {
-            const mobileExtras = document.createElement('li');
-            mobileExtras.className = 'mobile-extras';
-            mobileExtras.style.display = 'flex';
-            mobileExtras.style.flexDirection = 'column';
-            mobileExtras.style.gap = '15px';
-            mobileExtras.style.marginTop = '20px';
-
-            // Clone Theme Toggle
-            const themeBtn = navExtras.querySelector('#theme-toggle');
-            if (themeBtn) {
-                const themeBtnClone = themeBtn.cloneNode(true);
-                themeBtnClone.id = 'theme-toggle-mobile'; // Unique ID
-                themeBtnClone.addEventListener('click', () => {
-                    document.body.classList.toggle('dark-mode');
-                    const isDark = document.body.classList.contains('dark-mode');
-                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
-                    // Update BOTH buttons
-                    const iconClass = isDark ? 'fa-sun' : 'fa-moon';
-                    themeBtn.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
-                    themeBtnClone.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
-                });
-                mobileExtras.appendChild(themeBtnClone);
-            }
-
-            // Clone Play Button
-            const playBtn = navExtras.querySelector('.btn-play');
-            if (playBtn) {
-                const playBtnClone = playBtn.cloneNode(true);
-                mobileExtras.appendChild(playBtnClone);
-            }
-
-            // Append to Nav Links container
-            navLinks.appendChild(mobileExtras);
-        }
+        // Mobile Extras Injection removed by request
     }
 
 });
