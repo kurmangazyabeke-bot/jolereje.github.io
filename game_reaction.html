@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Супер Реакция - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .reaction-area {
+            width: 100%;
+            height: 400px;
+            background: #eee;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .icon-display {
+            font-size: 8rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #555;
+            text-align: center;
+        }
+
+        .btn-stop {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #EF476F;
+            border: 10px solid #D62839;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            /* hidden until signal */
+        }
+
+        .btn-stop:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <div class="section-title">
+                    <h2>Супер Реакция</h2>
+                    <p>Қауіпті сигналды көргенде, бірден басыңыз!</p>
+                </div>
+
+                <div class="reaction-area" id="box" onclick="handleClick()">
+                    <div class="message" id="msg">Ойнау үшін басыңыз</div>
+                    <i class="fa-solid fa-hand fa-beat-fade icon-display" id="icon"></i>
+                </div>
+
+                <p style="color: #666;">Нәтижелер: <span id="results"></span></p>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const box = document.getElementById('box');
+        const msg = document.getElementById('msg');
+        const icon = document.getElementById('icon');
+        const results = document.getElementById('results');
+
+        let state = 'waiting'; // waiting, ready, active, result
+        let startTime = 0;
+        let timer = null;
+
+        function handleClick() {
+            if (state === 'waiting') {
+                prepareGame();
+            } else if (state === 'ready') {
+                // Clicked too early
+                endGame(false);
+            } else if (state === 'active') {
+                // Success
+                endGame(true);
+            } else if (state === 'result') {
+                prepareGame();
+            }
+        }
+
+        function prepareGame() {
+            state = 'ready';
+            box.style.background = '#FFD166'; // Yellow - Get Ready
+            msg.innerText = 'Дайындал...';
+            msg.style.color = 'black';
+            icon.style.display = 'none';
+            icon.className = 'fa-solid fa- exclamation';
+
+            // Random delay 2-5s
+            const delay = 2000 + Math.random() * 3000;
+
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                showSignal();
+            }, delay);
+        }
+
+        function showSignal() {
+            if (state !== 'ready') return;
+            state = 'active';
+            box.style.background = '#EF476F'; // Red - STOP
+            msg.innerText = 'ТОҚТА!';
+            msg.style.color = 'white';
+            icon.className = 'fa-solid fa-hand';
+            icon.style.display = 'block';
+            icon.style.color = 'white';
+
+            startTime = Date.now();
+        }
+
+        function endGame(success) {
+            clearTimeout(timer);
+            if (!success) {
+                state = 'waiting';
+                box.style.background = '#eee';
+                msg.innerText = 'Тым ерте бастыңыз! Қайтадан.';
+                msg.style.color = '#555';
+            } else {
+                const diff = Date.now() - startTime;
+                state = 'result';
+                box.style.background = '#06D6A0'; // Green - Good
+                msg.innerText = diff + ' мс';
+
+                let comment = '';
+                if (diff < 250) comment = ' (Өте керемет!)';
+                else if (diff < 400) comment = ' (Жақсы)';
+                else comment = ' (Баяу, мұқият бол)';
+
+                msg.innerText += comment;
+
+                // Save result
+                results.innerText += ` [${diff}ms] `;
+            }
+        }
+    </script>
+</body>
+
+</html>

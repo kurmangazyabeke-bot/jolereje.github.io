@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ойындар - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .page-header {
+            text-align: center;
+            padding: 80px 20px 40px;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: var(--dark);
+            border: 2px solid transparent;
+            /* Prepare for border hover */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: var(--shadow-strong);
+            background: white;
+            border-color: var(--secondary);
+        }
+
+        .game-card:hover .play-btn {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            background: #f0f8ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: transform 0.4s;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .game-card:hover .game-icon {
+            transform: rotate(20deg) scale(1.1);
+            background: var(--primary);
+            color: white;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .game-desc {
+            color: #666;
+            margin-bottom: 25px;
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .play-btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* Unique colors for variety */
+        .game-card:nth-child(2n) .game-icon {
+            color: var(--secondary);
+            background: #e0fff4;
+        }
+
+        .game-card:nth-child(2n):hover .game-icon {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .game-card:nth-child(2n):hover {
+            border-color: var(--secondary);
+        }
+
+        .game-card:nth-child(2n):hover .play-btn {
+            background: var(--secondary);
+            box-shadow: 0 5px 15px rgba(0, 242, 96, 0.4);
+        }
+
+        .game-card:nth-child(3n) .game-icon {
+            color: var(--danger);
+            background: #ffe0e6;
+        }
+
+        .game-card:nth-child(3n):hover .game-icon {
+            background: var(--danger);
+            color: white;
+        }
+
+        .game-card:nth-child(3n):hover {
+            border-color: var(--danger);
+        }
+
+        .game-card:nth-child(3n):hover .play-btn {
+            background: var(--danger);
+            box-shadow: 0 5px 15px rgba(239, 71, 111, 0.4);
+        }
+
+        .game-card:nth-child(4n) .game-icon {
+            color: var(--accent);
+            background: #fffbe0;
+        }
+
+        .game-card:nth-child(4n):hover .game-icon {
+            background: var(--accent);
+            color: #333;
+        }
+
+        .game-card:nth-child(4n):hover {
+            border-color: var(--accent);
+        }
+
+        .game-card:nth-child(4n):hover .play-btn {
+            background: #333;
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-decoration">
+        <div class="blob blob-1" style="background: #a8edea;"></div>
+        <div class="blob blob-2" style="background: #fed6e3;"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="badge" style="background: var(--secondary); color: white;">🎮 Ойын Алаңы</div>
+        <h1>Ойна да <span class="highlight">Үйрен!</span></h1>
+        <p>Көңілді ойындар арқылы жол ережелерін есіңе сақта.</p>
+    </header>
+
+    <!-- Games Grid -->
+    <section class="games-grid">
+
+        <!-- Game 1: Quiz -->
+        <a href="game_quiz.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-clipboard-question"></i>
+            </div>
+            <div class="game-title">Викторина</div>
+            <div class="game-desc">Сұрақтарға жауап беріп, біліміңді тексер. Ең көп ұпай жина!</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 2: Crossy Road -->
+        <a href="game_cross.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-person-walking"></i>
+            </div>
+            <div class="game-title">Жолдан өт</div>
+            <div class="game-desc">Көліктерге қағылмай, жолдан қауіпсіз өтіп көр.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 3: Sign Match -->
+        <a href="game_match.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-shapes"></i>
+            </div>
+            <div class="game-title">Белгіні тап</div>
+            <div class="game-desc">Жол белгілерін олардың мағынасымен сәйкестендір.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 4: Traffic Controller -->
+        <a href="game_lights.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-traffic-light"></i>
+            </div>
+            <div class="game-title">Реттеуші</div>
+            <div class="game-desc">Бағдаршамды басқар! Кептеліс болдырмай, көліктерді өткіз.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 5: Bike Run -->
+        <a href="game_bike.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-bicycle"></i>
+            </div>
+            <div class="game-title">Вело-Жарыс</div>
+            <div class="game-desc">Кедергілерден қашып, қауіпсіздік шлемдерін жина.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 6: Sign Puzzle -->
+        <a href="game_puzzle.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <div class="game-title">Белгі Құрастыр</div>
+            <div class="game-desc">Шашылған бөлшектерден жол белгілерін дұрыс құрастыр.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 7: Safe Path Maze -->
+        <a href="game_maze.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <div class="game-title">Қауіпсіз Жол</div>
+            <div class="game-desc">Лабиринт ішіндегі үйден мектепке дейінгі ең қауіпсіз жолды тап.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 8: Reaction Test -->
+        <a href="game_reaction.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-stopwatch"></i>
+            </div>
+            <div class="game-title">Супер Реакция</div>
+            <div class="game-desc">Қауіпті жағдайды көргенде қаншалықты жылдам тоқтай аласың?</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+        <!-- Game 9: Situation Sorter -->
+        <a href="game_sort.html" class="game-card">
+            <div class="game-icon">
+                <i class="fa-solid fa-thumbs-up"></i>
+            </div>
+            <div class="game-title">Дұрыс па?</div>
+            <div class="game-desc">Көрсетілген жағдайдың жол ережесіне сай немесе сай еместігін анықта.</div>
+            <span class="play-btn">Ойнау</span>
+        </a>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class="shape-fill"></path>
+            </svg>
+        </div>
+        <div class="footer-content">
+            <div class="footer-main">
+                <h2>JolEreje</h2>
+                <p>Қауіпсіз болашақ — бүгіннен басталады.</p>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Басты бет</a>
+                <a href="learning.html">Үйрену</a>
+                <a href="game.html">Ойындар</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 JolEreje.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

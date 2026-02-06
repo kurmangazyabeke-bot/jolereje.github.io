@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JolEreje - Қауіпсіз Жол Әлемі</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-container">
+        <div class="hero-text">
+            <div class="badge">🆕 Жаңа формат</div>
+            <h1>Жол Ережесін <br><span class="highlight">Ойынмен</span> Үйрен!</h1>
+            <p>Балаларға арналған интерактивті платформа. Қауіпсіздік — бұл жай сөз емес, бұл сенің суперкүшің!</p>
+
+            <div class="cta-group">
+                <a href="learning.html" class="btn-primary-lg">Үйренуді бастау</a>
+                <a href="#features" class="btn-text">Толығырақ ↓</a>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-bubble">
+                    <span class="count">10+</span>
+                    <span class="label">Ойын</span>
+                </div>
+                <div class="stat-bubble">
+                    <span class="count">100%</span>
+                    <span class="label">Тегін</span>
+                </div>
+                <div class="stat-bubble">
+                    <span class="count">KZ</span>
+                    <span class="label">Қазақша</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <!-- Sky Decor (New) -->
+            <div class="sky-elements">
+                <div class="sun-glow"></div>
+                <div class="cloud-float c1"><i class="fa-solid fa-cloud"></i></div>
+                <div class="cloud-float c2"><i class="fa-solid fa-cloud"></i></div>
+                <div class="flying-drone">
+                    <i class="fa-solid fa-robot"></i>
+                    <span class="drone-text">Патруль</span>
+                </div>
+                <div class="flying-plane">
+                    <i class="fa-solid fa-plane-up"></i>
+                </div>
+                <!-- Bird flock -->
+                <div class="bird b1"></div>
+                <div class="bird b2"></div>
+            </div>
+
+            <div class="isometric-city">
+                <!-- Roads -->
+                <div class="road-complex road-ns"></div> <!-- North-South -->
+                <div class="road-complex road-ew"></div> <!-- East-West -->
+                <div class="intersection-center"></div>
+
+                <!-- Markings (Zebra) -->
+                <div class="zebra-crossing" style="top: 60%; left: 50%; transform: translateX(-50%);"></div>
+                <div class="zebra-crossing vertical" style="top: 50%; left: 35%; transform: translateY(-50%);"></div>
+
+                <!-- Vehicles -->
+                <div class="car-3d car-red"></div>
+                <div class="car-3d car-blue"></div>
+                <div class="car-3d car-yellow fast"></div> <!-- Sports car -->
+                <div class="bus-3d">
+                    <div class="bus-body"></div>
+                    <div class="bus-window"></div>
+                </div>
+
+                <!-- Traffic Elements -->
+                <div class="traffic-light-3d t-north">
+                    <div class="light red active"></div>
+                    <div class="light yellow"></div>
+                    <div class="light green"></div>
+                </div>
+                <div class="traffic-light-3d t-east">
+                    <div class="light red"></div>
+                    <div class="light yellow"></div>
+                    <div class="light green active"></div>
+                </div>
+
+                <!-- Pedestrian -->
+                <div class="person-3d"></div>
+
+                <!-- Decorations -->
+                <div class="tree" style="top: 20px; left: 20px;"></div>
+                <div class="tree" style="top: 100px; left: 40px;"></div>
+                <div class="tree" style="bottom: 20px; right: 20px;"></div>
+                <div class="building low" style="top: -40px; right: 0;"></div>
+                <div class="building tall" style="bottom: -20px; left: -30px;"></div>
+                <div class="street-lamp" style="top: 150px; left: 300px;"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Running Tip Line -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">⚠️ Жолдан өтерде асықпа!</div>
+            <div class="ticker-item">🛑 "STOP" белгісін көрсең, міндетті түрде тоқта.</div>
+            <div class="ticker-item">🚲 Велосипедпен көшеге 14 жастан бастап шығуға болады.</div>
+            <div class="ticker-item">👂 Құлаққапты шешіп жүр!</div>
+            <div class="ticker-item">🌙 Түнде жарық шағылыстырғыш киім ки.</div>
+        </div>
+    </div>
+
+    <!-- Features Section with Wave -->
+    <div class="wave-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path
+                d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+                class="shape-fill"></path>
+        </svg>
+    </div>
+
+    <section id="features" class="features-section">
+        <div class="section-header">
+            <h2>Неге JolEreje?</h2>
+            <div class="underline"></div>
+        </div>
+
+        <div class="cards-3d-grid">
+            <div class="card-3d">
+                <div class="icon-circle" style="background: #e0f7fa; color: #00bcd4;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h3>Оңай Оқу</h3>
+                <p>Балаларға түсінікті тілде жазылған теориялық материалдар.</p>
+            </div>
+            <div class="card-3d center-card">
+                <div class="icon-circle" style="background: #fff3e0; color: #ff9800;">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h3>Ойын = Тәжірибе</h3>
+                <p>Жай ғана жаттамай, ойын арқылы ережелерді бекіт.</p>
+                <div class="badge-pop">TOP</div>
+            </div>
+            <div class="card-3d">
+                <div class="icon-circle" style="background: #fce4ec; color: #e91e63;">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+                <h3>Тек Қазақша</h3>
+                <p>Толықтай қазақ тіліндегі сапалы контент.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Learning Roadmap Section -->
+    <section class="roadmap-section">
+        <div class="section-header">
+            <h2>Оқу Жолы</h2>
+            <p>Қауіпсіздік сарапшысы болу үшін 3 қадам</p>
+            <div class="underline"></div>
+        </div>
+
+        <div class="roadmap-container">
+            <div class="road-line"></div>
+
+            <!-- Step 1 -->
+            <div class="roadmap-step left">
+                <div class="step-icon"><i class="fa-solid fa-book-open"></i></div>
+                <div class="step-content">
+                    <h3>1. Оқып үйрен</h3>
+                    <p>Жол белгілері мен ережелерін суреттер арқылы жаттап ал.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="roadmap-step right">
+                <div class="step-icon"><i class="fa-solid fa-gamepad"></i></div>
+                <div class="step-content">
+                    <h3>2. Ойнап жаттық</h3>
+                    <p>Виртуалды қалада көліктерден қашып, біліміңді сына.</p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="roadmap-step left">
+                <div class="step-icon"><i class="fa-solid fa-trophy"></i></div>
+                <div class="step-content">
+                    <h3>3. Жеңімпаз бол</h3>
+                    <p>Барлық деңгейден өтіп, "Қауіпсіздік Сақшысы" атағын ал!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Daily Mission Widget -->
+    <section class="mission-section">
+        <div class="mission-card">
+            <div class="mission-header">
+                <h3>🔥 Күнделікті Тапсырма</h3>
+                <span class="timer-badge">24 сағ қалды</span>
+            </div>
+            <div class="mission-body">
+                <div class="mission-visual">
+                    <i class="fa-solid fa-person-walking-arrow-right fade-icon"></i>
+                </div>
+                <div class="mission-info">
+                    <h4>"Жолдан өт" шебері</h4>
+                    <p>Жолдан 10 рет сәтті өтіп, рекорд жаңарт!</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 30%;"></div>
+                    </div>
+                    <p class="progress-text">3/10 орындалды</p>
+                </div>
+                <a href="game_cross.html" class="btn-mission">Орындау</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="modern-footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    class="shape-fill"></path>
+            </svg>
+        </div>
+        <div class="footer-content">
+            <div class="footer-main">
+                <h2>JolEreje</h2>
+                <p>Қауіпсіз болашақ — бүгіннен басталады.</p>
+                <div class="socials">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Басты бет</a>
+                <a href="learning.html">Үйрену</a>
+                <a href="game.html">Ойындар</a>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 JolEreje.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

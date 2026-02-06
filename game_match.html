@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Белгіні тап - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .game-board {
+            max-width: 800px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            font-family: 'Nunito', sans-serif;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-item i {
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: transparent;
+            height: 140px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-inner {
+            transform: rotateY(180deg);
+            box-shadow: 0 0 15px #06D6A0;
+            animation: pulse-green 1s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 10px #06D6A0;
+            }
+
+            50% {
+                box-shadow: 0 0 25px #06D6A0;
+            }
+
+            100% {
+                box-shadow: 0 0 10px #06D6A0;
+            }
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid white;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #FF9A9E, #FECFEF);
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 3rem;
+        }
+
+        .card-back {
+            background-color: white;
+            color: #333;
+            transform: rotateY(180deg);
+            border: 3px solid var(--primary);
+            flex-direction: column;
+        }
+
+        .card-back i {
+            font-size: 3.5rem;
+            color: #333;
+        }
+
+        .card-back p {
+            font-size: 0.85rem;
+            margin-top: 10px;
+            line-height: 1.2;
+        }
+
+        /* Overlay */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 30px;
+        }
+
+        .modal-content h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Responsive Grid */
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .card {
+                height: 100px;
+            }
+
+            .card-back i {
+                font-size: 2rem;
+            }
+
+            .card-back p {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="section-title">
+                <h2>Белгіні тап</h2>
+                <p>12 секунд ішінде барлық жұптарды тап!</p>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item"><i class="fa-solid fa-layer-group"></i> <span>Деңгей: <span
+                            id="level">1</span></span></div>
+                <div class="stat-item"><i class="fa-regular fa-clock"></i> <span id="time">00:00</span></div>
+                <div class="stat-item"><i class="fa-solid fa-star"></i> <span id="score">0</span></div>
+            </div>
+
+            <div class="game-board">
+                <div class="grid" id="grid">
+                    <!-- Cards Generates Here -->
+                </div>
+            </div>
+
+            <div class="modal-overlay" id="modal">
+                <div class="modal-content" style="text-align: center;">
+                    <h2 id="modal-title">Жеңіс! 🎉</h2>
+                    <p style="font-size: 1.5rem; margin-bottom: 30px;">Жиналған ұпай: <span id="final-score"
+                            style="color:#FFD166; font-weight:bold;">0</span></p>
+                    <button class="btn-cta" onclick="nextLevel()" id="btn-next">Келесі деңгей</button>
+                    <button class="btn-cta" onclick="restartGame()" id="btn-restart"
+                        style="display:none; background:#EF476F;">Қайта бастау</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // Data: Icons and Texts
+        const signs = [
+            { icon: 'fa-stop', text: 'Тоқта', color: '#EF476F' },
+            { icon: 'fa-person-walking', text: 'Жаяу жүргінші', color: '#4FACFE' },
+            { icon: 'fa-bicycle', text: 'Велосипед жолы', color: '#06D6A0' },
+            { icon: 'fa-bus', text: 'Аялдама', color: '#FFD166' },
+            { icon: 'fa-school', text: 'Балалар', color: '#EF476F' },
+            { icon: 'fa-square-parking', text: 'Тұрақ', color: '#4FACFE' },
+            { icon: 'fa-ban', text: 'Кіруге болмайды', color: '#EF476F' },
+            { icon: 'fa-utensils', text: 'Тамақтану', color: '#06D6A0' }
+        ];
+
+        let level = 1;
+        let score = 0;
+        let timeLeft = 0;
+        let timerInterval;
+        let cardsArray = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matchesFound = 0;
+        let totalPairs = 0;
+
+        const grid = document.getElementById('grid');
+        const levelEl = document.getElementById('level');
+        const timeEl = document.getElementById('time');
+        const scoreEl = document.getElementById('score');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const finalScoreEl = document.getElementById('final-score');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+
+        // Difficulty Settings
+        // Level 1: 4 cards (2 pairs) - Icon to Icon
+        // Level 2: 8 cards (4 pairs) - Icon to Icon
+        // Level 3: 8 cards (4 pairs) - Icon to Text
+        // Level 4: 12 cards (6 pairs) - Icon to Text
+
+        function getLevelConfig(lvl) {
+            if (lvl === 1) return { pairs: 2, time: 10, mode: 'icon' };
+            if (lvl === 2) return { pairs: 4, time: 20, mode: 'icon' };
+            if (lvl === 3) return { pairs: 4, time: 25, mode: 'text' };
+            if (lvl >= 4) return { pairs: 6, time: 40, mode: 'text' };
+        }
+
+        function initLevel() {
+            const config = getLevelConfig(level);
+            totalPairs = config.pairs;
+            timeLeft = config.time;
+            matchesFound = 0;
+            levelEl.innerText = level;
+            updateTimerDisplay();
+
+            // Prepare Data
+            // Shuffle signs and pick N unique ones
+            const shuffledSigns = [...signs].sort(() => 0.5 - Math.random()).slice(0, config.pairs);
+
+            // Create Pairs
+            let cardItems = [];
+
+            shuffledSigns.forEach(sign => {
+                // Item 1 (Always Icon)
+                cardItems.push({ id: sign.text, type: 'icon', val: sign });
+
+                // Item 2 (Icon or Text depending on mode)
+                if (config.mode === 'icon') {
+                    cardItems.push({ id: sign.text, type: 'icon', val: sign });
+                } else {
+                    cardItems.push({ id: sign.text, type: 'text', val: sign });
+                }
+            });
+
+            // Shuffle Cards
+            cardItems.sort(() => 0.5 - Math.random());
+
+            // Build Grid
+            grid.innerHTML = '';
+            // Adjust grid columns
+            if (config.pairs === 2) grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            else if (config.pairs === 4) grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            else grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+
+            cardItems.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = item.id;
+
+                let frontContent = '<i class="fa-solid fa-question"></i>'; // Cover
+
+                // Back content (The Answer)
+                let backContent = '';
+                if (item.type === 'icon') {
+                    backContent = `<i class="fa-solid ${item.val.icon}" style="color: ${item.val.color}"></i>`;
+                } else {
+                    backContent = `<p style="font-size:1.1rem; color:#333;">${item.val.text}</p>`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">${frontContent}</div>
+                        <div class="card-back">${backContent}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', flipCard);
+                grid.appendChild(card);
+            });
+
+            startTimer();
+            modal.style.display = 'none';
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            lockBoard = true;
+
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+            if (isMatch) {
+                disableCards();
+                score += 100 + (timeLeft * 2); // Speed bonus
+                scoreEl.innerText = score;
+                matchesFound++;
+
+                if (matchesFound === totalPairs) {
+                    endGame(true);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            resetBoard();
+        }
+
+        function unflipCards() {
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [lockBoard, firstCard, secondCard] = [false, null, null];
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            timeEl.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            timeEl.style.color = timeLeft < 5 ? '#EF476F' : '#333';
+        }
+
+        function endGame(win) {
+            clearInterval(timerInterval);
+            modal.style.display = 'flex';
+            finalScoreEl.innerText = score;
+
+            if (win) {
+                modalTitle.innerText = `Деңгей ${level} аяқталды!`;
+                modalTitle.style.color = '#06D6A0';
+                btnNext.style.display = 'inline-block';
+                btnRestart.style.display = 'none';
+            } else {
+                modalTitle.innerText = 'Уақыт бітті!';
+                modalTitle.style.color = '#EF476F';
+                btnNext.style.display = 'none';
+                btnRestart.style.display = 'inline-block';
+            }
+        }
+
+        function nextLevel() {
+            level++;
+            initLevel();
+        }
+
+        function restartGame() {
+            level = 1;
+            score = 0;
+            scoreEl.innerText = '0';
+            initLevel();
+        }
+
+        // Start
+        initLevel();
+
+    </script>
+</body>
+
+</html>

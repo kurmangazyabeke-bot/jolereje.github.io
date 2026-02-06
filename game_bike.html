@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вело-Жарыс - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .game-wrapper {
+            max-width: 500px;
+        }
+
+        .game-scene {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: #4caf50;
+            /* Grass */
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 5px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            perspective: 800px;
+            /* 3D view effect */
+        }
+
+        /* Scenery Sliding */
+        .scenery {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle, #8bc34a 20%, transparent 20%),
+                radial-gradient(circle, #8bc34a 20%, transparent 20%);
+            background-size: 100px 100px;
+            background-position: 0 0, 50px 50px;
+            opacity: 0.5;
+            animation: scrollGrass 1s linear infinite;
+        }
+
+        @keyframes scrollGrass {
+            from {
+                background-position: 0 0, 50px 50px;
+            }
+
+            to {
+                background-position: 0 100px, 50px 150px;
+            }
+        }
+
+        /* The Road */
+        .road {
+            position: absolute;
+            left: 50%;
+            top: -20px;
+            bottom: -20px;
+            width: 300px;
+            background: #555;
+            transform: translateX(-50%) rotateX(20deg);
+            border-left: 10px solid #fff;
+            border-right: 10px solid #fff;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .lane-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(180deg, transparent 0, transparent 40px, rgba(255, 255, 255, 0.5) 40px, rgba(255, 255, 255, 0.5) 80px);
+            background-size: 100% 100%;
+            animation: roadScroll 0.5s linear infinite;
+        }
+
+        .lane-sep-1 {
+            position: absolute;
+            left: 33%;
+            height: 100%;
+            width: 4px;
+            background: repeating-linear-gradient(180deg, #fff 0, #fff 30px, transparent 30px, transparent 60px);
+        }
+
+        .lane-sep-2 {
+            position: absolute;
+            right: 33%;
+            height: 100%;
+            width: 4px;
+            background: repeating-linear-gradient(180deg, #fff 0, #fff 30px, transparent 30px, transparent 60px);
+        }
+
+        @keyframes roadScroll {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 0 80px;
+            }
+        }
+
+        /* Player */
+        .player-bike {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            /* Will be manipulated via JS */
+            width: 60px;
+            height: 100px;
+            transform: translateX(-50%);
+            z-index: 100;
+            transition: left 0.1s ease-out;
+            font-size: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 10px 5px rgba(0, 0, 0, 0.5));
+        }
+
+        .bike-shadow {
+            position: absolute;
+            bottom: 5px;
+            width: 50px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            transform: scaleY(0.5);
+        }
+
+        /* Items */
+        .game-item {
+            position: absolute;
+            font-size: 2.5rem;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .item-shadow {
+            position: absolute;
+            bottom: -5px;
+            width: 80%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+        }
+
+        /* UI Overlay */
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 200;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .hud-panel {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            color: white;
+            text-align: center;
+        }
+
+        .controls-area {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 150;
+            display: flex;
+        }
+
+        .touch-left,
+        .touch-right {
+            flex: 1;
+            /* opacity: 0.1; background: red; Debug */
+        }
+
+        /* Damage Flash */
+        @keyframes flashRed {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(255, 0, 0, 0.3);
+            }
+        }
+
+        .damage-effect {
+            animation: flashRed 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="section-title">
+                <h2>Вело-Марафон 🚴</h2>
+                <p>Кедергілерден қаш, энергия жина!</p>
+            </div>
+
+            <div class="game-scene" id="scene">
+                <!-- Moving Background -->
+                <div class="scenery"></div>
+
+                <!-- Road -->
+                <div class="road">
+                    <div class="lane-sep-1"></div>
+                    <div class="lane-sep-2"></div>
+                </div>
+
+                <!-- HUD -->
+                <div class="hud">
+                    <div class="hud-panel">
+                        <i class="fa-solid fa-heart" style="color:#FF5F5F;"></i> <span id="lives">3</span>
+                    </div>
+                    <div class="hud-panel">
+                        <i class="fa-solid fa-bolt" style="color:#FFD166;"></i> <span id="score">0</span>
+                    </div>
+                </div>
+
+                <!-- Player -->
+                <div class="player-bike" id="player">
+                    <div class="bike-visual">🚴</div>
+                    <div class="bike-shadow"></div>
+                </div>
+
+                <!-- Touch Controls (Invisible) -->
+                <div class="controls-area">
+                    <div class="touch-left" onmousedown="move(-1)" ontouchstart="move(-1)"></div>
+                    <div class="touch-right" onmousedown="move(1)" ontouchstart="move(1)"></div>
+                </div>
+
+                <!-- Overlay -->
+                <div id="overlay">
+                    <div style="font-size:4rem; margin-bottom:10px;">🏆</div>
+                    <h2 id="ov-title">Дайынсың ба?</h2>
+                    <p id="ov-desc">Экранның оң немесе сол жағын басып басқар.</p>
+                    <button class="btn-cta" onclick="startGame()">Жарысты Бастау</button>
+                </div>
+            </div>
+
+            <p style="text-align:center; color:#666; margin-top:10px;">
+                Басқару: <i class="fa-solid fa-arrow-left"></i> Солға | Оңға <i class="fa-solid fa-arrow-right"></i>
+            </p>
+        </div>
+    </section>
+
+    <script>
+        const scene = document.getElementById('scene');
+        const player = document.getElementById('player');
+        const livesEl = document.getElementById('lives');
+        const scoreEl = document.getElementById('score');
+        const overlay = document.getElementById('overlay');
+        const ovTitle = document.getElementById('ov-title');
+        const ovDesc = document.getElementById('ov-desc');
+
+        // Config
+        // Scene width 100% -> but road is fixed width 300px centered.
+        // Scene is 500px wide (max-width).
+        // Road is centered. 
+        // 3 Lanes.
+        // Lane 0: Left (-80px from center)
+        // Lane 1: Center (0px)
+        // Lane 2: Right (+80px)
+
+        const LANES = [-80, 0, 80];
+        let currentLane = 1;
+
+        // State
+        let active = false;
+        let score = 0;
+        let lives = 3;
+        let speed = 5;
+        let items = [];
+
+        let loopId, spawnId;
+
+        // Start
+        function startGame() {
+            active = true;
+            items.forEach(i => i.el.remove());
+            items = [];
+            score = 0;
+            lives = 3;
+            speed = 5;
+            currentLane = 1;
+
+            updateUI();
+            updatePlayer();
+            overlay.style.display = 'none';
+
+            clearInterval(spawnId);
+            spawnId = setInterval(spawner, 1000);
+
+            cancelAnimationFrame(loopId);
+            loopId = requestAnimationFrame(gameLoop);
+        }
+
+        // Controls
+        function move(dir) {
+            if (!active) return;
+            currentLane += dir;
+            if (currentLane < 0) currentLane = 0;
+            if (currentLane > 2) currentLane = 2;
+            updatePlayer();
+        }
+
+        function updatePlayer() {
+            // We move the player using translateX combined with the centering
+            // Base X is 50%. We add currentLane offset.
+            // But wait, the player is inside the scene, not the road. 
+            // The road is width 300px.
+            // Lane 1 is center of scene.
+            // Lane 0 is -100px?
+            // Let's deduce. Road width 300. Lanes are ~100px wide each.
+            // Offsets: -100, 0, 100. Let's try.
+            let offset = (currentLane - 1) * 100;
+            player.style.left = `calc(50% + ${offset}px)`;
+
+            // Tilt animation
+            let tilt = (currentLane - 1) * 10; // -10, 0, 10 deg
+            player.children[0].style.transform = `rotate(${tilt}deg)`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') move(-1);
+            if (e.key === 'ArrowRight') move(1);
+        });
+
+        // Spawner
+        function spawner() {
+            if (!active) return;
+
+            let lane = Math.floor(Math.random() * 3);
+            let typeRand = Math.random();
+            let type = 'rock'; // default
+
+            if (typeRand > 0.9) type = 'heart';       // 10%
+            else if (typeRand > 0.7) type = 'energy'; // 20%
+            else if (typeRand > 0.6) type = 'cone';   // 10%
+            else type = 'rock';                       // 60%
+
+            createItem(type, lane);
+
+            // Ramp up speed
+            if (speed < 15) speed += 0.05;
+        }
+
+        function createItem(type, lane) {
+            let el = document.createElement('div');
+            el.className = 'game-item';
+
+            let icon = '';
+            if (type === 'rock') icon = '🪨';
+            if (type === 'cone') icon = '🚧';
+            if (type === 'heart') icon = '💖';
+            if (type === 'energy') icon = '⚡';
+
+            el.innerHTML = `${icon}<div class="item-shadow"></div>`;
+
+            // Position
+            // Start from Top (-100px)
+            // X offset same as player logic
+            let offset = (lane - 1) * 100;
+            el.style.left = `calc(50% + ${offset}px)`;
+            el.style.top = '-100px';
+
+            scene.appendChild(el);
+
+            items.push({
+                el: el,
+                type: type,
+                lane: lane,
+                y: -100,
+                passed: false
+            });
+        }
+
+        // Loop
+        function gameLoop() {
+            if (!active) return;
+
+            // Move items
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                item.y += speed;
+                item.el.style.top = item.y + 'px';
+
+                // Scale effect for pseudo-3D
+                // Start scale 0.5 at top, 1.0 at bottom?
+                // Map Y -100..600 to Scale 0.5..1.2
+                let scale = 0.5 + ((item.y + 100) / 700) * 0.7;
+                item.el.style.transform = `translateX(-50%) scale(${scale})`;
+
+                // Collision
+                // Player Y is fixed at bottom: ~560px?
+                // CSS: bottom: 40px; height: 100px.
+                // Player Top Y in container coords: 600 - 40 - 100 = 460px.
+                // Player Bottom Y: 600 - 40 = 560px.
+                // Center Y ~ 510px.
+
+                // Hitbox logic
+                if (item.y > 450 && item.y < 550 && item.lane === currentLane && !item.passed) {
+                    handleCollision(item);
+                }
+
+                // Cleanup
+                if (item.y > 650) {
+                    item.el.remove();
+                    items.splice(i, 1);
+                    i--;
+                    // Score for survival
+                    if (item.type === 'rock' || item.type === 'cone') {
+                        score += 5;
+                        updateUI();
+                    }
+                }
+            }
+
+            loopId = requestAnimationFrame(gameLoop);
+        }
+
+        function handleCollision(item) {
+            item.passed = true; // Handle only once
+
+            if (item.type === 'rock' || item.type === 'cone') {
+                // Damage
+                lives--;
+                updateUI();
+                flashDamage();
+                item.el.style.opacity = '0.5'; // Visual feedback
+
+                if (lives <= 0) {
+                    gameOver();
+                }
+            } else if (item.type === 'heart') {
+                lives++;
+                if (lives > 5) lives = 5;
+                updateUI();
+                floatText(item, "+1 ❤️");
+                item.el.style.display = 'none'; // consumed
+            } else if (item.type === 'energy') {
+                score += 50;
+                updateUI();
+                floatText(item, "+50 ⚡");
+                item.el.style.display = 'none';
+            }
+        }
+
+        function flashDamage() {
+            scene.style.animation = 'none';
+            scene.offsetHeight; /* trigger reflow */
+            scene.style.animation = 'flashRed 0.3s';
+        }
+
+        function floatText(item, text) {
+            // Optional: little floating text effect
+        }
+
+        function updateUI() {
+            livesEl.innerText = lives;
+            scoreEl.innerText = Math.floor(score);
+        }
+
+        function gameOver() {
+            active = false;
+            clearInterval(spawnId);
+            cancelAnimationFrame(loopId);
+
+            overlay.style.display = 'flex';
+            ovTitle.innerText = "Ойын Аяқталды";
+            ovDesc.innerText = `Сіздің нәтижеңіз: ${Math.floor(score)} ұпай`;
+            document.querySelector('#overlay button').innerText = "Қайта Ойнау";
+        }
+
+    </script>
+</body>
+
+</html>

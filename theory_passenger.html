@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жолаушы қауіпсіздігі - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .theory-content {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .theory-block {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .theory-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .theory-block:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .theory-text {
+            flex: 1;
+        }
+
+        .theory-text h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .theory-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .theory-visual {
+            flex: 1;
+            background: #f4f9fc;
+            border-radius: 20px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+
+            .theory-block,
+            .theory-block:nth-child(even) {
+                flex-direction: column;
+            }
+
+            .theory-visual {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html" class="active">Оқу</a></li>
+            <li><a href="game.html">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <div class="section">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <a href="learning.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Артқа қайту</a>
+            <div class="section-title" style="text-align: left; margin-bottom: 30px;">
+                <h2>Жолаушы қауіпсіздігі</h2>
+                <p>Көлік ішінде өзін қалай ұстау керек?</p>
+            </div>
+        </div>
+
+        <div class="theory-content">
+
+            <!-- Block 1: Seat Belt -->
+            <div class="theory-block">
+                <div class="theory-text">
+                    <h3>1. Қауіпсіздік белдігі</h3>
+                    <p>Көлікке отырған бойда ең бірінші істейтін іс — <strong>қауіпсіздік белдігін тағу</strong>. Бұл
+                        сені кез келген соқтығысудан қорғайды.</p>
+                </div>
+                <div class="theory-visual">
+                    <div
+                        style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #eee;">
+                        <i class="fa-solid fa-user" style="font-size: 8rem; color: #555;"></i>
+                        <!-- Seat belt -->
+                        <div
+                            style="position: absolute; width: 10px; height: 180px; background: #333; transform: rotate(-45deg); top: 60px; left: 45%;">
+                        </div>
+                        <div
+                            style="position: absolute;  top: 60px; right: 80px; font-size: 2rem; color: var(--secondary); background: white; border-radius: 50%; padding: 10px;">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block 2: Car Seat -->
+            <div class="theory-block">
+                <div class="theory-text">
+                    <h3>2. Арнайы орындық (Автокресло)</h3>
+                    <p>12 жасқа дейінгі балалар көліктің артқы орындығында және арнайы <strong>автокреслода</strong>
+                        отыруы керек.</p>
+                </div>
+                <div class="theory-visual">
+                    <i class="fa-solid fa-chair" style="font-size: 6rem; color: #EF476F;"></i>
+                    <i class="fa-solid fa-child"
+                        style="font-size: 2.5rem; color: white; position: absolute; top: 120px;"></i>
+                </div>
+            </div>
+
+            <!-- Block 3: Don't stick parts out -->
+            <div class="theory-block">
+                <div class="theory-text">
+                    <h3>3. Терезеден шықпа!</h3>
+                    <p>Көлік жүріп келе жатқанда терезеден басты немесе қолды шығаруға <strong>қатаң тыйым
+                            салынады</strong>.</p>
+                </div>
+                <div class="theory-visual">
+                    <div
+                        style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #ddd;">
+                        <div
+                            style="width: 200px; height: 150px; border: 5px solid #2B2D42; border-radius: 10px; background: #87CEEB; position: relative; overflow: hidden;">
+                            <!-- Car Window -->
+                            <i class="fa-solid fa-user"
+                                style="font-size: 4rem; color: #555; position: absolute; bottom: -20px; left: 20px; transform: rotate(-20deg);"></i>
+                            <div
+                                style="width: 60px; height: 10px; background: #FFD166; position: absolute; top: 50px; right: -20px; transform: rotate(-20deg);">
+                            </div> <!-- Arm -->
+                        </div>
+                        <i class="fa-solid fa-ban"
+                            style="position: absolute; font-size: 8rem; color: var(--danger); opacity: 0.8;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block 4: Door Safety -->
+            <div class="theory-block">
+                <div class="theory-text">
+                    <h3>4. Есікті абайлап аш!</h3>
+                    <p>Көлік толық тоқтаған соң ғана есікті ашу керек. Есікті <strong>тротуар жаққа</strong> қарап ашу
+                        қауіпсіз.</p>
+                </div>
+                <div class="theory-visual">
+                    <div
+                        style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-car-side" style="font-size: 6rem; color: #4FACFE;"></i>
+                        <i class="fa-solid fa-door-open"
+                            style="font-size: 4rem; color: #333; position: absolute; right: 140px; bottom: 80px;"></i>
+                        <div style="position: absolute; bottom: 20px; font-weight: bold; color: var(--secondary);">
+                            Тротуар жаққа!</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- More Learning Modules -->
+    <section class="modules-grid" style="padding-top: 50px;">
+        <div style="grid-column: 1 / -1; margin-bottom: 20px; text-align: center;">
+            <h2 style="font-size: 2rem; color: var(--dark); font-family: 'Nunito', sans-serif;">Басқа тақырыптар</h2>
+        </div>
+
+        <a href="theory_pedestrian.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); color: #2a5298;">
+                <i class="fa-solid fa-person-walking"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жаяу жүргінші</h3>
+                <p>Көшеден қалай дұрыс өту керек? Бағдаршам түрлері және жол таңбалары туралы толық ақпарат.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_signs.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); color: #ff9800;">
+                <i class="fa-solid fa-signs-post"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жол белгілері</h3>
+                <p>Ескерту, тыйым салу және ақпараттық белгілерді ажыратып үйрен. Әр белгінің мағынасы.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_bike.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #e91e63;">
+                <i class="fa-solid fa-bicycle"></i>
+            </div>
+            <div class="module-info">
+                <h3>Велосипед & Самокат</h3>
+                <p>Велосипед пен самокатты қауіпсіз айдау ережелері. Қорғаныс құралдары және жас шектеулері.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_passenger.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #009688;">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жолаушы қауіпсіздігі</h3>
+                <p>Көлік ішіндегі тәртіп ережелері. Қауіпсіздік белдігін тағу және көліктен түсу мәдениеті.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

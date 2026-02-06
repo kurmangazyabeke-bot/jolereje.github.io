@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .question h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            background: #f0f8ff;
+            border: 2px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .quiz-option:hover {
+            background: #e6f2ff;
+            border-color: var(--primary);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: #dbeeff;
+        }
+
+        .quiz-option.correct {
+            border-color: var(--secondary);
+            background: #d1ffde;
+            color: #006400;
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--danger);
+            background: #ffe3e3;
+            color: #8b0000;
+        }
+
+        .game-status {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+            /* Hidden initially */
+        }
+
+        .btn-next:hover {
+            background: #3a9bdc;
+        }
+
+        .feedback-text {
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="section-title">
+                <h2>Викторина</h2>
+                <p>Сұрақтарға жауап беріп, өз біліміңді сынап көр!</p>
+            </div>
+
+            <div id="quiz-block">
+                <div class="game-status">
+                    <span id="question-count">Сұрақ: 1/5</span>
+                    <span id="score-display" style="color: var(--secondary);">Ұпай: 0</span>
+                </div>
+
+                <div class="question">
+                    <h3 id="question-text">Сұрақ жүктелуде...</h3>
+                </div>
+
+                <div class="options-grid" id="options-container">
+                    <!-- Options will be injected here -->
+                </div>
+
+                <div class="feedback-text" id="feedback"></div>
+
+                <button class="btn-next" id="next-btn" onclick="nextQuestion()">Келесі сұрақ</button>
+            </div>
+
+            <div id="result-block" class="quiz-container hidden" style="display: none;">
+                <i class="fa-solid fa-trophy" style="font-size: 4rem; color: #FFD166; margin-bottom: 20px;"></i>
+                <h3>Ойын аяқталды!</h3>
+                <p style="font-size: 1.5rem; margin-bottom: 20px;">Сіздің нәтижеңіз: <span id="final-score">0</span></p>
+                <button class="btn-cta" onclick="location.reload()">Қайта ойнау</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Game Logic Script -->
+    <script>
+        const questions = [
+            {
+                text: "Бағдаршамның қызыл түсі жанғанда не істеу керек?",
+                options: [
+                    "Жүре беру керек",
+                    "Тоқтау керек",
+                    "Дайындалу керек"
+                ],
+                correct: 1 // Index of correct answer
+            },
+            {
+                text: "Жаяу жүргінші жолдан қай жерден өтуі керек?",
+                options: [
+                    "Кез келген жерден",
+                    "Жаяу жүргіншілер өткелінен (зебра)",
+                    "Автобус аялдамасынан"
+                ],
+                correct: 1
+            },
+            {
+                text: "Бағдаршамның жасыл түсі нені білдіреді?",
+                options: [
+                    "Қозғалысқа рұқсат",
+                    "Тоқта",
+                    "Күте тұр"
+                ],
+                correct: 0
+            },
+            {
+                text: "Тротуар жоқ болса, жолдың қай жағымен жүру керек?",
+                options: [
+                    "Көлік қозғалысына қарсы",
+                    "Көлік қозғалысымен бағыттас",
+                    "Жолдың ортасымен"
+                ],
+                correct: 0
+            },
+            {
+                text: "Велосипед тебуге қай жерде рұқсат етіледі?",
+                options: [
+                    "Автожолда",
+                    "Арнайы веложолда немесе аулада/саябақта",
+                    "Дүкеннің ішінде"
+                ],
+                correct: 1
+            },
+            {
+                text: "Көлікте балалар қайда отыруы керек?",
+                options: [
+                    "Алдыңғы орындықта",
+                    "Артқы орындықта, автокреслода",
+                    "Жүргізушінің үстінде"
+                ],
+                correct: 1
+            },
+            {
+                text: "Автобустан түскен соң қалай өту керек?",
+                options: [
+                    "Алдынан жүгіріп өту",
+                    "Автобустың кетуін күту",
+                    "Арасынан өту"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            const q = questions[currentQIndex];
+            document.getElementById('question-text').textContent = q.text;
+            document.getElementById('question-count').textContent = `Сұрақ: ${currentQIndex + 1}/${questions.length}`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = ''; // clear
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'quiz-option';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('next-btn').style.display = 'none';
+            answered = false;
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (answered) return;
+            answered = true;
+
+            const correctIndex = questions[currentQIndex].correct;
+            const allOptions = document.querySelectorAll('.quiz-option');
+
+            if (selectedIndex === correctIndex) {
+                btnElement.classList.add('correct');
+                score += 10;
+                document.getElementById('score-display').textContent = `Ұпай: ${score}`;
+                document.getElementById('feedback').textContent = "Дұрыс! 👍";
+                document.getElementById('feedback').style.color = "var(--secondary)";
+            } else {
+                btnElement.classList.add('wrong');
+                // Show correct one
+                allOptions[correctIndex].classList.add('correct');
+                document.getElementById('feedback').textContent = "Қате! 😔";
+                document.getElementById('feedback').style.color = "var(--danger)";
+            }
+
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            if (currentQIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-block').style.display = 'none';
+            document.getElementById('result-block').style.display = 'block';
+            document.getElementById('final-score').textContent = `${score} / ${questions.length * 10}`;
+        }
+
+        // Init
+        loadQuestion();
+    </script>
+</body>
+
+</html>

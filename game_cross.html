@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жолдан өт - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .game-wrapper {
+            max-width: 800px;
+        }
+
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #505050;
+            /* Road Color */
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 8px solid #333;
+            user-select: none;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Decoration: Grass on sides? */
+        .sidewalk {
+            position: absolute;
+            width: 100%;
+            height: 80px;
+            background: #d0d0d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            border-bottom: 5px solid #fff;
+        }
+
+        .sidewalk.top {
+            top: 0;
+        }
+
+        .sidewalk.bottom {
+            bottom: 0;
+            border-bottom: none;
+            border-top: 5px solid #fff;
+        }
+
+        /* Road Markings */
+        .road-lanes {
+            position: absolute;
+            top: 80px;
+            bottom: 80px;
+            width: 100%;
+        }
+
+        .lane-line {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background-image: linear-gradient(90deg, #fff 50%, transparent 50%);
+            background-size: 80px 100%;
+            opacity: 0.5;
+        }
+
+        /* Zebra */
+        .zebra {
+            position: absolute;
+            left: 50%;
+            height: 340px;
+            /* 500 - 80 - 80 */
+            width: 120px;
+            top: 80px;
+            transform: translateX(-50%);
+            background-image: linear-gradient(to bottom,
+                    #fff 0%, #fff 50%,
+                    transparent 50%, transparent 100%);
+            background-size: 100% 60px;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        /* CAR CSS - Guaranteed Visibility */
+        .car-obj {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            border-radius: 8px;
+            box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.3);
+            z-index: 50;
+            /* High Z-Index */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+
+        /* Car styles */
+        .car-obj::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            right: 10px;
+            bottom: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Headlights */
+        .car-obj::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 100%;
+            right: -2px;
+            top: 0;
+            background: radial-gradient(circle, yellow 50%, transparent 50%);
+            background-size: 100% 30%;
+            background-repeat: no-repeat;
+            background-position: center top, center bottom;
+        }
+
+        /* Tail lights for left going cars */
+        .car-left::after {
+            left: -2px;
+            right: auto;
+            background: radial-gradient(circle, red 50%, transparent 50%);
+            background-size: 100% 30%;
+            background-position: center top, center bottom;
+        }
+
+        .traffic-light {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            padding: 10px;
+            background: #222;
+            border-radius: 10px;
+            z-index: 100;
+            border: 2px solid #555;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bulb {
+            width: 40px;
+            height: 40px;
+            background: #444;
+            border-radius: 50%;
+            border: 2px solid #111;
+        }
+
+        .bulb.red.on {
+            background: #ff3333;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        .bulb.green.on {
+            background: #33ff33;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .player {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: grid;
+            place-items: center;
+            color: white;
+            transition: top 0.1s linear, left 0.1s linear;
+        }
+
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="section-title">
+                <h2>Жолдан өт</h2>
+                <p>Көлік тіпті жоқ болып көрінсе де, жасыл түсті күт!</p>
+            </div>
+
+            <div class="game-area" id="stage">
+                <div class="sidewalk top"></div>
+                <div class="sidewalk bottom"></div>
+
+                <div class="zebra"></div>
+
+                <div class="road-lanes">
+                    <!-- Lines separating lanes -->
+                    <div class="lane-line" style="top: 33%;"></div>
+                    <div class="lane-line" style="top: 66%;"></div>
+                </div>
+
+                <div class="traffic-light">
+                    <div class="bulb red" id="light-red"></div>
+                    <div class="bulb green" id="light-green"></div>
+                </div>
+
+                <div class="player" id="player"><i class="fa-solid fa-user"></i></div>
+
+                <div id="ui-overlay">
+                    <h2 id="msg-title">Дайынсың ба?</h2>
+                    <p id="msg-text">Жасыл жанғанда жүр.<br>Көліктерден абай бол.</p>
+                    <button class="btn-cta" onclick="startGame()" style="margin-top:20px;">Бастау</button>
+                </div>
+            </div>
+
+            <div style="text-align:center; padding: 20px; font-weight:bold; font-size: 1.2rem;">
+                Деңгей: <span id="lvl">1</span> |
+                Өмір: <span id="lives">3</span>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div style="display:flex; justify-content:center; gap:20px;">
+                <button class="btn-cta" style="padding: 20px; border-radius:50%; width:80px; height:80px;"
+                    onmousedown="move(-1)" ontouchstart="move(-1)">⬆️</button>
+                <button class="btn-cta" style="padding: 20px; border-radius:50%; width:80px; height:80px;"
+                    onmousedown="move(1)" ontouchstart="move(1)">⬇️</button>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // Setup
+        const stage = document.getElementById('stage');
+        const player = document.getElementById('player');
+        const lightRed = document.getElementById('light-red');
+        const lightGreen = document.getElementById('light-green');
+        const ui = document.getElementById('ui-overlay');
+        const msgTitle = document.getElementById('msg-title');
+        const msgText = document.getElementById('msg-text');
+
+        // Settings
+        const AREA_WIDTH = 800; // Matches CSS max-width roughly, but internal coordinates matter
+        const START_Y = 460; // Bottom sidewalk
+        const END_Y = 40;    // Top sidewalk
+
+        // 3 Lanes
+        // Lane 1 (Top): Y ~ 130
+        // Lane 2 (Mid): Y ~ 250
+        // Lane 3 (Bot): Y ~ 360
+        const LANES = [140, 250, 360];
+
+        // Game State
+        let active = false;
+        let playerY = START_Y;
+        let cars = [];
+        let level = 1;
+        let lives = 3;
+        let isRed = true;
+
+        let loopTimer;
+        let spawnTimer;
+        let lightTimer;
+
+        function startGame() {
+            active = true;
+            cars.forEach(c => c.element.remove());
+            cars = [];
+            level = 1;
+            lives = 3;
+            playerY = START_Y;
+            updateHUD();
+            ui.style.display = 'none';
+
+            // Start Logic
+            startLightCycle();
+
+            clearInterval(spawnTimer);
+            spawnTimer = setInterval(spawnCar, 2000); // Initial spawn rate
+
+            clearInterval(loopTimer);
+            loopTimer = setInterval(gameLoop, 20); // 50fps
+        }
+
+        function spawnCar() {
+            if (!active) return;
+
+            // Create DOM
+            let carEl = document.createElement('div');
+            carEl.className = 'car-obj';
+
+            // Random Lane
+            let laneIdx = Math.floor(Math.random() * 3);
+            let y = LANES[laneIdx];
+
+            // Direction: Even lanes go Right, Odd go Left? Or Random?
+            // Let's standardise: Top(0) -> Right, Mid(1) -> Left, Bot(2) -> Right
+            let dir = (laneIdx % 2 === 0) ? 1 : -1;
+
+            // Color
+            let colors = ['#e74c3c', '#e67e22', '#f1c40f', '#3498db', '#9b59b6'];
+            carEl.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            if (dir === -1) {
+                carEl.classList.add('car-left'); // Tail lights on left
+            }
+
+            // Initial Pos
+            let x = (dir === 1) ? -100 : 850; // Offscreen
+
+            carEl.style.top = (y - 20) + 'px'; // Center vertically
+            carEl.style.left = x + 'px';
+
+            stage.appendChild(carEl);
+
+            let speed = 2 + (level * 0.5) + Math.random() * 2;
+
+            cars.push({
+                element: carEl,
+                x: x,
+                y: y,
+                speed: speed,
+                dir: dir
+            });
+        }
+
+        function gameLoop() {
+            if (!active) return;
+
+            // Move Player Visual
+            player.style.top = playerY + 'px';
+            player.style.left = '50%'; // Always center X
+
+            // Move Cars
+            for (let i = 0; i < cars.length; i++) {
+                let car = cars[i];
+                car.x += car.speed * car.dir;
+                car.element.style.left = car.x + 'px';
+
+                // Collision
+                // Player is at X: 400 (Center of 800px wrapper? Actually relative to stage. Width is 100%)
+                // Stage width is dynamic. Center is 50%. Let's assume stage width ~800px on desktop.
+                // Better: Check overlap of rectangles.
+
+                let pRect = player.getBoundingClientRect();
+                let cRect = car.element.getBoundingClientRect();
+
+                // shrink hitboxes a bit
+                if (!(pRect.right - 10 < cRect.left + 5 ||
+                    pRect.left + 10 > cRect.right - 5 ||
+                    pRect.bottom - 10 < cRect.top + 5 ||
+                    pRect.top + 10 > cRect.bottom - 5)) {
+                    hit("Көлік қағып кетті!");
+                }
+
+                // Cleanup
+                if (car.x < -150 || car.x > 900) {
+                    car.element.remove();
+                    cars.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // Check Win (Top)
+            if (playerY < 80) {
+                nextLevel();
+            }
+        }
+
+        function move(dir) {
+            if (!active) return;
+
+            // Check Red Light Rule
+            // Walking on road (Y between 80 and 420) while Red
+            let onRoad = playerY > 80 && playerY < 420;
+            if (onRoad && isRed) {
+                // Warning
+                hit("Қызыл жанғанда жүруге болмайды!");
+                return;
+            } else if (!onRoad && isRed && dir < 0) {
+                // Trying to enter road on red
+                alert("Қызыл жанып тұр! Күт.");
+                return;
+            }
+
+            playerY += dir * 50;
+            // Clamp
+            if (playerY < 20) playerY = 20;
+            if (playerY > START_Y) playerY = START_Y;
+        }
+
+        // Light Logic
+        function startLightCycle() {
+            clearTimeout(lightTimer);
+            setLight(true); // Red start
+        }
+
+        function setLight(red) {
+            isRed = red;
+            if (red) {
+                lightRed.classList.add('on');
+                lightGreen.classList.remove('on');
+                // Red time
+                lightTimer = setTimeout(() => setLight(false), 2000);
+            } else {
+                lightRed.classList.remove('on');
+                lightGreen.classList.add('on');
+                // Green time (shorter per level)
+                let time = Math.max(1000, 3500 - (level * 200));
+                lightTimer = setTimeout(() => setLight(true), time);
+            }
+        }
+
+        function hit(msg) {
+            lives--;
+            updateHUD();
+            if (lives <= 0) {
+                gameOver(msg);
+            } else {
+                // Reset pos
+                playerY = START_Y;
+                alert("Абайла! " + msg + " (-1 Өмір)");
+            }
+        }
+
+        function nextLevel() {
+            level++;
+            alert("Келесі деңгей: " + level);
+            playerY = START_Y;
+
+            // Make harder
+            clearInterval(spawnTimer);
+            let rate = Math.max(600, 2000 - (level * 150));
+            spawnTimer = setInterval(spawnCar, rate);
+
+            updateHUD();
+        }
+
+        function gameOver(msg) {
+            active = false;
+            clearInterval(loopTimer);
+            clearInterval(spawnTimer);
+            clearTimeout(lightTimer);
+
+            ui.style.display = 'flex';
+            msgTitle.innerText = "Ойын аяқталды";
+            msgText.innerText = msg;
+            document.querySelector('#ui-overlay button').innerText = "Қайта бастау";
+        }
+
+        function updateHUD() {
+            document.getElementById('lvl').innerText = level;
+            document.getElementById('lives').innerText = lives;
+        }
+
+        // Keys
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') move(-1);
+            if (e.key === 'ArrowDown') move(1);
+        });
+
+    </script>
+</body>
+
+</html>

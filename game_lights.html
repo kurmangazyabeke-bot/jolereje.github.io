@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реттеуші - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .game-wrapper {
+            max-width: 900px;
+        }
+
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #a8d5bd;
+            /* Grass color */
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 8px solid #333;
+            user-select: none;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.2);
+            font-family: 'Segoe UI Emoji', sans-serif;
+        }
+
+        /* Scenery */
+        .tree {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 1;
+        }
+
+        /* Road */
+        .road {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            background: #505050;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            border-top: 4px solid #fff;
+            border-bottom: 4px solid #fff;
+        }
+
+        .road-marks {
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 40px, transparent 40px, transparent 80px);
+            opacity: 0.7;
+        }
+
+        /* Crosswalk */
+        .crosswalk {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 160px;
+            background: repeating-linear-gradient(90deg, white 0, white 25px, transparent 25px, transparent 50px);
+            z-index: 3;
+            opacity: 0.9;
+        }
+
+        /* Police Officer (Regulator) */
+        .police-stand {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            transition: 0.3s;
+        }
+
+        .police-stand:hover {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .police-icon {
+            font-size: 4rem;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+            transition: transform 0.2s;
+        }
+
+        .whistle-bubble {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            background: white;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: scale(0);
+            transition: 0.2s;
+            pointer-events: none;
+        }
+
+        .whistle-bubble.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Entities */
+        .car-obj {
+            position: absolute;
+            font-size: 3.5rem;
+            z-index: 50;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Brake lights */
+        .car-obj.braking::after {
+            content: '';
+            position: absolute;
+            left: -5px;
+            /* Assuming car faces right */
+            top: 10px;
+            height: 30px;
+            width: 5px;
+            background: red;
+            box-shadow: 0 0 10px red;
+            border-radius: 2px;
+        }
+
+        .pedestrian-obj {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: 60;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Status UI */
+        .status-light {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #222;
+            color: white;
+            border-radius: 30px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid #555;
+            z-index: 150;
+        }
+
+        .status-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: gray;
+        }
+
+        .status-dot.go {
+            background: #06D6A0;
+            box-shadow: 0 0 10px #06D6A0;
+        }
+
+        .status-dot.stop {
+            background: #EF476F;
+            box-shadow: 0 0 10px #EF476F;
+        }
+
+        /* Angry Bubble */
+        .angry-bubble {
+            position: absolute;
+            top: -30px;
+            left: 10px;
+            font-size: 1.5rem;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Overlay */
+        #game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            color: white;
+            text-align: center;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="section-title">
+                <h2>Реттеуші (Полиция)</h2>
+                <p>Сіз - жол полициясысыз! Ысқырықты басып, қозғалысты реттеңіз.</p>
+            </div>
+
+            <div class="stats-bar">
+                <span>Бақытты жүргіншілер: <span id="score-val" style="color:var(--primary);">0</span></span>
+                <span>Кептеліс деңгейі: <span id="jam-val" style="color:orange;">0%</span></span>
+            </div>
+
+            <div class="game-area" id="stage">
+                <!-- Environment -->
+                <div class="tree" style="top: 20px; left: 20px;">🌳</div>
+                <div class="tree" style="top: 40px; right: 80px;">🌲</div>
+                <div class="tree" style="bottom: 30px; left: 100px;">🏠</div>
+                <div class="tree" style="bottom: 20px; right: 20px;">🏢</div>
+
+                <div class="road">
+                    <div class="road-marks"></div>
+                </div>
+                <div class="crosswalk"></div>
+
+                <!-- Regulator -->
+                <div class="police-stand" onclick="toggleTraffic()">
+                    <div class="police-icon" id="police-icon">👮‍♂️</div>
+                    <div class="whistle-bubble" id="whistle-bubble">ТОҚТА!</div>
+                </div>
+
+                <div class="status-light">
+                    <div class="status-dot go" id="light-icon"></div>
+                    <span id="status-text">Көліктерге РҰҚСАТ</span>
+                </div>
+
+                <!-- Game Over Overlay -->
+                <div id="game-overlay">
+                    <div style="font-size: 5rem; margin-bottom: 20px;">💥</div>
+                    <h2 id="end-title">Ойын аяқталды</h2>
+                    <p id="end-reas" style="font-size: 1.2rem; margin-bottom: 20px;">...</p>
+                    <button class="btn-cta" onclick="startGame()">Қайта бастау</button>
+                </div>
+
+                <div id="start-overlay"
+                    style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:200; color:white;">
+                    <h2>Полиция рөліне кіріңіз!</h2>
+                    <p style="margin:20px 0; max-width:400px; text-align:center;">
+                        Полицейді басып, көліктерді тоқтатыңыз немесе жіберіңіз.<br>
+                        Жаяу жүргіншілерді қауіпсіз өткізіп, кептелісті болдырмаңыз!
+                    </p>
+                    <button class="btn-cta" onclick="startGame()">Кезекшілікті бастау</button>
+                </div>
+            </div>
+
+            <p style="text-align:center; color:#666; margin-top:15px;">
+                <i class="fa-solid fa-hand-pointer"></i> Полицейді басыңыз!
+            </p>
+
+        </div>
+    </section>
+
+    <script>
+        const stage = document.getElementById('stage');
+        const policeIcon = document.getElementById('police-icon');
+        const whistleBubble = document.getElementById('whistle-bubble');
+        const lightIcon = document.getElementById('light-icon');
+        const statusText = document.getElementById('status-text');
+
+        const scoreVal = document.getElementById('score-val');
+        const jamVal = document.getElementById('jam-val');
+
+        const overlay = document.getElementById('game-overlay');
+        const startOverlay = document.getElementById('start-overlay');
+        const endReas = document.getElementById('end-reas');
+
+        // Config
+        const ROAD_Y = 250; // Center Y of stage (500/2)
+        const CROSS_X = 450; // Center X (900/2)
+        const STOP_X_LEFT = 360;  // Where cars stop coming from left
+        const STOP_X_RIGHT = 540; // Where cars stop coming from right
+
+        // State
+        let isCarsAllowed = true; // True = Cars Go, Peds Stop. False = Cars Stop, Peds Go.
+        let active = false;
+        let score = 0;
+        let jamLevel = 0;
+
+        let entities = []; // Cars and Peds
+        let spawnId, loopId;
+
+        function startGame() {
+            active = true;
+            entities.forEach(e => e.el.remove());
+            entities = [];
+            score = 0;
+            jamLevel = 0;
+            updateUI();
+
+            overlay.style.display = 'none';
+            startOverlay.style.display = 'none';
+
+            // Set initial state
+            isCarsAllowed = true;
+            updatePoliceState();
+
+            clearInterval(spawnId);
+            spawnId = setInterval(spawner, 1500); // Spawn every 1.5s
+
+            cancelAnimationFrame(loopId);
+            loopId = requestAnimationFrame(gameLoop);
+        }
+
+        function toggleTraffic() {
+            if (!active) return;
+
+            isCarsAllowed = !isCarsAllowed;
+
+            // Whistle effect
+            whistleBubble.innerText = isCarsAllowed ? "ЖҮРІҢДЕР!" : "ТОҚТА!";
+            whistleBubble.classList.add('show');
+            setTimeout(() => whistleBubble.classList.remove('show'), 1000);
+
+            updatePoliceState();
+        }
+
+        function updatePoliceState() {
+            if (isCarsAllowed) {
+                policeIcon.innerText = "👮‍♂️"; // Normal
+                policeIcon.style.transform = "scale(1)";
+                lightIcon.className = "status-dot go";
+                statusText.innerText = "Көліктерге РҰҚСАТ";
+                statusText.style.color = "#06D6A0";
+            } else {
+                policeIcon.innerText = "👮‍♀️"; // Stop gesture (variant) or just rotate?
+                policeIcon.style.transform = "scale(1.1)";
+                lightIcon.className = "status-dot stop";
+                statusText.innerText = "Көліктер ТОҚТАЙДЫ";
+                statusText.style.color = "#EF476F";
+            }
+        }
+
+        function spawner() {
+            if (!active) return;
+
+            // 60% chance spawn car, 40% ped
+            if (Math.random() < 0.6) {
+                spawnCar();
+            } else {
+                spawnPed();
+            }
+        }
+
+        function spawnCar() {
+            let car = document.createElement('div');
+            car.className = 'car-obj';
+
+            // Random direction: 0 = Left->Right, 1 = Right->Left
+            let dir = Math.random() < 0.5 ? 1 : -1;
+            let type = ['🚗', '🚕', '🚙', '🏎️', '🚐', '🛻'][Math.floor(Math.random() * 6)];
+
+            car.innerText = type;
+
+            // Lanes
+            // Road is height 160. Y=250 is center.
+            // Lane 1 (L->R): Y ~ 270 (Bottom half)
+            // Lane 2 (R->L): Y ~ 230 (Top half)
+
+            let y = (dir === 1) ? 280 : 220;
+            let x = (dir === 1) ? -80 : 980;
+
+            if (dir === -1) car.style.transform = "scaleX(-1)"; // Face left
+
+            car.style.left = x + 'px';
+            car.style.top = (y - 30) + 'px'; // Centered
+
+            stage.appendChild(car);
+
+            entities.push({
+                type: 'car',
+                el: car,
+                x: x,
+                y: y,
+                dir: dir,
+                speed: 3 + Math.random() * 2,
+                waiting: false,
+                patience: 100
+            });
+        }
+
+        function spawnPed() {
+            let ped = document.createElement('div');
+            ped.className = 'pedestrian-obj';
+            let type = ['🚶', '🏃', '🧍', '🚶‍♂️', '🚶‍♀️'][Math.floor(Math.random() * 5)];
+            ped.innerText = type;
+
+            // Top to Bottom
+            // Crosswalk X = 450.
+            // Start Y = -50.
+
+            let x = 450 + (Math.random() * 40 - 20); // Variation
+            let y = -50;
+
+            ped.style.left = (x - 20) + 'px';
+            ped.style.top = y + 'px';
+
+            stage.appendChild(ped);
+
+            entities.push({
+                type: 'ped',
+                el: ped,
+                x: x,
+                y: y,
+                dir: 1, // Down
+                speed: 1.5 + Math.random(),
+                waiting: false,
+                patience: 100
+            });
+        }
+
+        function gameLoop() {
+            if (!active) return;
+
+            let carsStopped = 0;
+
+            for (let i = 0; i < entities.length; i++) {
+                let e = entities[i];
+                let move = true;
+
+                if (e.type === 'car') {
+                    // Logic: Stop if !isCarsAllowed AND near crosswalk
+                    // Stop Lines: Left 360, Right 540
+                    let distToStop = 999;
+                    if (e.dir === 1) distToStop = STOP_X_LEFT - e.x;
+                    else distToStop = e.x - STOP_X_RIGHT;
+
+                    if (distToStop > 0 && distToStop < 60 && !isCarsAllowed) {
+                        move = false;
+                        e.waiting = true;
+                        e.el.classList.add('braking');
+                    } else {
+                        // Check car ahead
+                        // Simple check: Find any car in same dir that is close ahead
+                        let carAhead = entities.find(other =>
+                            other !== e &&
+                            other.type === 'car' &&
+                            other.dir === e.dir &&
+                            ((e.dir === 1 && other.x > e.x && other.x < e.x + 90) ||
+                                (e.dir === -1 && other.x < e.x && other.x > e.x - 90))
+                        );
+
+                        if (carAhead) {
+                            move = false;
+                            e.waiting = true;
+                            e.el.classList.add('braking');
+                        } else if (isCarsAllowed || distToStop > 60 || distToStop < -20) {
+                            // If allowed OR far away OR already passed
+                            // If passed stop line but !allowed -> Dangerous!
+                            e.waiting = false;
+                            e.el.classList.remove('braking');
+                        }
+                    }
+
+                    // Patience logic
+                    if (move === false && distToStop > 0 && distToStop < 100) {
+                        e.patience -= 0.2;
+                        carsStopped++;
+                        if (e.patience < 50 && !e.hasEmote) {
+                            showEmote(e, '😠');
+                            e.hasEmote = true;
+                        }
+                        if (e.patience <= 0) {
+                            gameOver("Жүргізушілер ашуланды! Кептеліс болды.");
+                            return;
+                        }
+                    }
+
+                } else if (e.type === 'ped') {
+                    // Stop if isCarsAllowed (Cars moving) AND near road
+                    // Road starts Y=170 ends Y=330
+                    if (e.y > 130 && e.y < 170 && isCarsAllowed) {
+                        move = false;
+                        e.waiting = true;
+                    } else {
+                        e.waiting = false;
+                    }
+
+                    // Patience logic for peds
+                    if (move === false) {
+                        e.patience -= 0.1;
+                        if (e.patience < 50 && !e.hasEmote) {
+                            showEmote(e, '🙄');
+                            e.hasEmote = true;
+                        }
+                    }
+                }
+
+                if (move) {
+                    if (e.type === 'car') e.x += e.speed * e.dir;
+                    else e.y += e.speed; // Peds always down
+                }
+
+                // Update CSS
+                e.el.style.left = (e.x - (e.type === 'car' ? 40 : 20)) + 'px';
+                e.el.style.top = (e.y - (e.type === 'car' ? 20 : 20)) + 'px';
+
+                // Collision Detection
+                // Rectangle intersection
+                if (e.type === 'ped' && e.y > 180 && e.y < 320) {
+                    // Ped is on road
+                    // Check colliding cars
+                    let hit = entities.find(c => c.type === 'car' &&
+                        Math.abs(c.x - e.x) < 50 &&
+                        Math.abs(c.y - e.y) < 40
+                    );
+                    if (hit) {
+                        gameOver("Апат! Жаяу жүргінші қағылды.");
+                        return;
+                    }
+                }
+
+                // Cleanup
+                if (e.x < -100 || e.x > 1000 || e.y > 550) {
+                    e.el.remove();
+                    entities.splice(i, 1);
+                    i--;
+                    score += 10;
+                }
+            }
+
+            // Update Jam Meter
+            if (carsStopped > 2) jamLevel += 0.5;
+            else jamLevel = Math.max(0, jamLevel - 0.1);
+
+            jamLevel = Math.min(100, jamLevel);
+            scoreVal.innerText = score;
+            jamVal.innerText = Math.floor(jamLevel) + "%";
+            jamVal.style.color = `hsl(${120 - jamLevel}, 100%, 40%)`;
+
+            if (jamLevel >= 100) {
+                gameOver("Кептеліс тым көп! Қала тоқтап қалды.");
+                return;
+            }
+
+            loopId = requestAnimationFrame(gameLoop);
+        }
+
+        function showEmote(entity, emoji) {
+            let bub = document.createElement('div');
+            bub.className = 'angry-bubble';
+            bub.innerText = emoji;
+            entity.el.appendChild(bub);
+        }
+
+        function updateUI() {
+            scoreVal.innerText = score;
+        }
+
+        function gameOver(reason) {
+            active = false;
+            clearInterval(spawnId);
+            cancelAnimationFrame(loopId);
+            overlay.style.display = 'flex';
+            endReas.innerText = reason;
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дұрыс па, Бұрыс па? - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .card-stack {
+            position: relative;
+            height: 350px;
+            margin-bottom: 30px;
+        }
+
+        .sort-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            transition: transform 0.5s, opacity 0.5s;
+            border: 2px solid #eee;
+        }
+
+        .card-icon {
+            font-size: 6rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .card-text {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-choice {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background: #EF476F;
+            color: white;
+        }
+
+        .btn-safe {
+            background: #06D6A0;
+            color: white;
+        }
+
+        .btn-choice:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animation classes */
+        .fly-left {
+            transform: translateX(-500px) rotate(-30deg);
+            opacity: 0;
+        }
+
+        .fly-right {
+            transform: translateX(500px) rotate(30deg);
+            opacity: 0;
+        }
+
+        .score-board {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+
+            <div class="sort-container">
+                <div class="section-title">
+                    <h2>Дұрыс па, Бұрыс па?</h2>
+                    <p>Қауіпті (❌) немесе Қауіпсіз (✅) екенін анықта.</p>
+                </div>
+
+                <div class="score-board">
+                    Дұрыс жауап: <span id="score" style="color: var(--secondary);">0</span>
+                </div>
+
+                <div class="card-stack" id="stack">
+                    <!-- Current Card -->
+                    <div class="sort-card" id="current-card">
+                        <i class="fa-solid fa-question card-icon"></i>
+                        <div class="card-text">Жүктелуде...</div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-choice btn-danger" onclick="choose(false)"><i
+                            class="fa-solid fa-xmark"></i></button>
+                    <button class="btn-choice btn-safe" onclick="choose(true)"><i
+                            class="fa-solid fa-check"></i></button>
+                </div>
+
+                <p id="feedback" style="margin-top:20px; font-weight:bold; height: 20px;"></p>
+
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <script>
+        const cardData = [
+            { text: "Қауіпсіздік белдігін тағу", safe: true, icon: "fa-seat-airline" }, // close enough icon
+            { text: "Жолда доп қуып ойнау", safe: false, icon: "fa-futbol" },
+            { text: "Зебрамен өту", safe: true, icon: "fa-person-walking" },
+            { text: "Телефон шұқылап жүру", safe: false, icon: "fa-mobile-screen" },
+            { text: "Тротуармен жүру", safe: true, icon: "fa-shoe-prints" },
+            { text: "Қызыл түске өту", safe: false, icon: "fa-traffic-light" },
+            { text: "Велосипед айдағанда шлем кию", safe: true, icon: "fa-helmet-safety" },
+            { text: "Жолдан жүгіріп өту", safe: false, icon: "fa-person-running" },
+            { text: "Автобустың артына жабысу", safe: false, icon: "fa-bus" },
+            { text: "Үлкендердің қолынан ұстау", safe: true, icon: "fa-handshake" }
+        ];
+
+        let index = 0;
+        let score = 0;
+        const stack = document.getElementById('stack');
+        let currentCardEl = document.getElementById('current-card');
+        const feedback = document.getElementById('feedback');
+
+        function loadCard() {
+            if (index >= cardData.length) {
+                currentCardEl.innerHTML = `
+                    <i class="fa-solid fa-trophy card-icon" style="color:#FFD166;"></i>
+                    <div class="card-text">Барлығын бітірдің! <br>Нәтиже: ${score}/${cardData.length}</div>
+                `;
+                document.querySelector('.buttons').style.display = 'none';
+                return;
+            }
+
+            const data = cardData[index];
+            currentCardEl.innerHTML = `
+                <i class="fa-solid ${data.icon} card-icon"></i>
+                <div class="card-text">${data.text}</div>
+            `;
+            // Reset anim classes
+            currentCardEl.className = 'sort-card';
+        }
+
+        function choose(isSafe) {
+            const data = cardData[index];
+            const correct = (isSafe === data.safe);
+
+            if (correct) {
+                score++;
+                document.getElementById('score').innerText = score;
+                feedback.innerText = "Дұрыс! 👍";
+                feedback.style.color = "green";
+            } else {
+                feedback.innerText = "Қате! 😔";
+                feedback.style.color = "red";
+            }
+
+            // Animate
+            if (isSafe) {
+                currentCardEl.classList.add('fly-right');
+            } else {
+                currentCardEl.classList.add('fly-left');
+            }
+
+            // Next
+            setTimeout(() => {
+                index++;
+                // Create new card element for animation smooth reset? 
+                // Actually easier to just reset content after wait
+                loadCard();
+            }, 300);
+        }
+
+        loadCard();
+
+    </script>
+</body>
+
+</html>

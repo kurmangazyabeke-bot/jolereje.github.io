@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жол белгілері - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .theory-content {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .sign-category {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .sign-category h3 {
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+
+        /* Sign Shapes reused */
+        .sign-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            border-bottom: 5px solid var(--light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sign-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .sign-visual {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shape-triangle-red {
+            width: 0;
+            height: 0;
+            border-left: 55px solid transparent;
+            border-right: 55px solid transparent;
+            border-bottom: 95px solid #EF476F;
+            position: relative;
+            margin-top: -10px;
+        }
+
+        .shape-triangle-red::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: -48px;
+            width: 0;
+            height: 0;
+            border-left: 48px solid transparent;
+            border-right: 48px solid transparent;
+            border-bottom: 83px solid white;
+            z-index: 1;
+        }
+
+        .shape-triangle-red .icon-container {
+            position: absolute;
+            top: 45px;
+            left: -50%;
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+            color: black;
+            font-size: 30px;
+        }
+
+        .shape-circle-red-border {
+            width: 90px;
+            height: 90px;
+            background: white;
+            border: 10px solid #EF476F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .shape-circle-blue {
+            width: 90px;
+            height: 90px;
+            background: #4FACFE;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 0 0 3px #4FACFE;
+        }
+
+        /* New Shapes */
+        .shape-circle-red-filled {
+            width: 90px;
+            height: 90px;
+            background: #EF476F;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 2px #EF476F;
+        }
+
+        .shape-diamond-yellow {
+            width: 70px;
+            height: 70px;
+            background: #FFD166;
+            transform: rotate(45deg);
+            border: 5px solid white;
+            box-shadow: 0 0 0 3px #FFD166;
+            /* Actually yellow diamond usually implies priority road in Europe/KZ is Yellow Diamond with White rim */
+            /* Standard Priority Road: Yellow diamond in white diamond */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shape-square-blue {
+            width: 90px;
+            height: 90px;
+            background: #4FACFE;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #4FACFE;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Elements -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html" class="active">Оқу</a></li>
+            <li><a href="game.html">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <div class="section">
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <a href="learning.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Артқа қайту</a>
+            <div class="section-title" style="text-align: left; margin-bottom: 30px;">
+                <h2>Жол белгілері</h2>
+                <p>Ең маңызды белгілерді үйреніп алайық</p>
+            </div>
+        </div>
+
+        <div class="theory-content">
+
+            <!-- Category: Warning -->
+            <div class="sign-category">
+                <h3>⚠️ Ескерту белгілері</h3>
+            </div>
+            <div class="cards-container">
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-triangle-red">
+                            <div class="icon-container"><i class="fa-solid fa-person-walking"></i></div>
+                        </div>
+                    </div>
+                    <h3>Жаяу жүргінші</h3>
+                    <p>Алда жаяу жүргіншілер өткелі бар.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-triangle-red">
+                            <div class="icon-container"><i class="fa-solid fa-child-reaching"></i></div>
+                        </div>
+                    </div>
+                    <h3>Балалар</h3>
+                    <p>Назар аудар! Жолға балалар шығуы мүмкін.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-triangle-red">
+                            <div class="icon-container"><i class="fa-solid fa-traffic-light"></i></div>
+                        </div>
+                    </div>
+                    <h3>Бағдаршам</h3>
+                    <p>Алда бағдаршам реттелімі бар қиылыс.</p>
+                </div>
+                <!-- Yield Sign (Triangle upside down red border) - Usually priority but similar shape structure -->
+                <!-- Actually Yield is Priority Group, but looks like warning upside down. -->
+            </div>
+
+            <!-- Category: Prohibition -->
+            <div class="sign-category">
+                <h3>⛔ Тыйым салу белгілері</h3>
+            </div>
+            <div class="cards-container">
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-circle-red-border">
+                            <i class="fa-solid fa-person-walking" style="color: black; font-size: 40px;"></i>
+                            <div
+                                style="position: absolute; width: 80px; height: 8px; background: #EF476F; transform: rotate(-45deg);">
+                            </div>
+                        </div>
+                    </div>
+                    <h3>Жаяуға тыйым</h3>
+                    <p>Бұл жерде жаяу жүруге болмайды.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-circle-red-border">
+                            <i class="fa-solid fa-bicycle" style="color: black; font-size: 35px;"></i>
+                            <div
+                                style="position: absolute; width: 80px; height: 8px; background: #EF476F; transform: rotate(-45deg);">
+                            </div>
+                        </div>
+                    </div>
+                    <h3>Велосипедке тыйым</h3>
+                    <p>Велосипедпен жүруге болмайды.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-circle-red-filled">
+                            <div style="width: 60px; height: 15px; background: white;"></div>
+                        </div>
+                    </div>
+                    <h3>Кіруге болмайды</h3>
+                    <p>"Кирпич". Көліктің кіруіне тыйым салынады.</p>
+                </div>
+            </div>
+
+            <!-- Category: Priority -->
+            <div class="sign-category">
+                <h3>🚦 Басымдылық белгілері</h3>
+            </div>
+            <div class="cards-container">
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div
+                            style="width: 90px; height: 90px; background: #EF476F; clip-path: polygon(29.29% 0%, 70.71% 0%, 100% 29.29%, 100% 70.71%, 70.71% 100%, 29.29% 100%, 0% 70.71%, 0% 29.29%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-family: sans-serif; font-size: 1.4rem;">
+                            STOP
+                        </div>
+                    </div>
+                    <h3>Тоқта</h3>
+                    <p>Міндетті түрде тоқтап, жол беру керек.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-diamond-yellow">
+                            <div style="width: 50px; height: 50px; background: #FFD166; border: 2px solid black;"></div>
+                            <!-- Styling hack for yellow diamond -->
+                        </div>
+                        <!-- Better CSS for main road -->
+                        <div
+                            style="position: absolute; width: 60px; height: 60px; background: #FFD166; transform: rotate(45deg); border: 4px solid white; box-shadow: 0 0 0 2px black;">
+                        </div>
+                    </div>
+                    <h3>Басты жол</h3>
+                    <p>Сенде бірінші өту құқығы бар.</p>
+                </div>
+            </div>
+
+            <!-- Category: Information/Mandatory -->
+            <div class="sign-category">
+                <h3>ℹ️ Ақпараттық белгілер</h3>
+            </div>
+            <div class="cards-container">
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-circle-blue">
+                            <i class="fa-solid fa-person-walking" style="font-size: 40px;"></i>
+                        </div>
+                    </div>
+                    <h3>Жаяу жолы</h3>
+                    <p>Тек жаяу жүргіншілерге арналған.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-circle-blue">
+                            <i class="fa-solid fa-bicycle" style="font-size: 35px;"></i>
+                        </div>
+                    </div>
+                    <h3>Веложол</h3>
+                    <p>Велосипедшілерге арналған жол.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-square-blue">
+                            <i class="fa-solid fa-bus" style="color: white; font-size: 40px;"></i>
+                        </div>
+                    </div>
+                    <h3>Аялдама</h3>
+                    <p>Автобус тоқтайтын орын.</p>
+                </div>
+                <div class="card sign-card">
+                    <div class="sign-visual">
+                        <div class="shape-square-blue">
+                            <i class="fa-solid fa-p" style="color: white; font-size: 50px; font-weight: bold;"></i>
+                        </div>
+                    </div>
+                    <h3>Тұрақ</h3>
+                    <p>Көлік қоюға рұқсат етілген орын (Парковка).</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- More Learning Modules -->
+    <section class="modules-grid" style="padding-top: 50px;">
+        <div style="grid-column: 1 / -1; margin-bottom: 20px; text-align: center;">
+            <h2 style="font-size: 2rem; color: var(--dark); font-family: 'Nunito', sans-serif;">Басқа тақырыптар</h2>
+        </div>
+
+        <a href="theory_pedestrian.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); color: #2a5298;">
+                <i class="fa-solid fa-person-walking"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жаяу жүргінші</h3>
+                <p>Көшеден қалай дұрыс өту керек? Бағдаршам түрлері және жол таңбалары туралы толық ақпарат.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_signs.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%); color: #ff9800;">
+                <i class="fa-solid fa-signs-post"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жол белгілері</h3>
+                <p>Ескерту, тыйым салу және ақпараттық белгілерді ажыратып үйрен. Әр белгінің мағынасы.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_bike.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); color: #e91e63;">
+                <i class="fa-solid fa-bicycle"></i>
+            </div>
+            <div class="module-info">
+                <h3>Велосипед & Самокат</h3>
+                <p>Велосипед пен самокатты қауіпсіз айдау ережелері. Қорғаныс құралдары және жас шектеулері.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="theory_passenger.html" class="module-card">
+            <div class="module-icon"
+                style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); color: #009688;">
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+            <div class="module-info">
+                <h3>Жолаушы қауіпсіздігі</h3>
+                <p>Көлік ішіндегі тәртіп ережелері. Қауіпсіздік белдігін тағу және көліктен түсу мәдениеті.</p>
+                <span class="btn-arrow">Оқуды бастау <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

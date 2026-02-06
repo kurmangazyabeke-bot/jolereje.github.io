@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Қауіпсіз Жол - JolEreje</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .grid {
+            display: grid;
+            gap: 5px;
+            margin: 20px auto;
+            border: 5px solid #333;
+            background: #333;
+            width: fit-content;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        .type-road {
+            background: #555;
+            position: relative;
+        }
+
+        .type-road::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: white;
+            opacity: 0.3;
+            top: 50%;
+            border-top: 2px dashed white;
+        }
+
+        /* Make road look dangerous */
+        .type-road::before {
+            content: '🚗';
+            font-size: 1rem;
+            position: absolute;
+            opacity: 0.5;
+        }
+
+        .type-sidewalk {
+            background: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .type-crosswalk {
+            background: repeating-linear-gradient(90deg, #555 0, #555 10px, white 10px, white 20px);
+        }
+
+        .type-wall {
+            background: #8B4513;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .type-start {
+            background: #06D6A0;
+            color: white;
+        }
+
+        .type-end {
+            background: #FFD166;
+            color: black;
+        }
+
+        .player-token {
+            color: var(--primary);
+            font-size: 2rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .status {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <span class="logo-icon">🚦</span>
+            <span class="logo-text">JolEreje</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Басты</a></li>
+            <li><a href="learning.html">Оқу</a></li>
+            <li><a href="game.html" class="active">Ойындар</a></li>
+        </ul>
+        <div class="nav-extras">
+            <button id="theme-toggle" class="btn-icon"><i class="fa-solid fa-moon"></i></button>
+            <a href="game.html" class="btn-play">Ойнау <i class="fa-solid fa-gamepad"></i></a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="game-wrapper">
+            <div style="text-align: left;">
+                <a href="game.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ойындарға қайту</a>
+            </div>
+            <div class="section-title">
+                <h2>Қауіпсіз Жол</h2>
+                <p>Тек тротуар немесе зебрамен жүр. Жолға шықпа!</p>
+            </div>
+
+            <div class="status" id="status">Деңгей: 1</div>
+
+            <div class="grid" id="grid"></div>
+
+            <button class="btn-cta" onclick="resetLevel()" style="margin-top:20px;">Қайта бастау</button>
+        </div>
+    </section>
+
+    <script>
+        const gridEl = document.getElementById('grid');
+        const statusEl = document.getElementById('status');
+
+        // Terrain Types
+        const T_ROAD = 0;
+        const T_SIDEWALK = 1;
+        const T_Zebra = 2;
+        const T_WALL = 3;
+        const T_START = 8;
+        const T_END = 9;
+
+        // Level 1 Map (6x6)
+        // 8 = Start, 9 = End
+        const level1 = [
+            [8, 1, 1, 3, 0, 0],
+            [3, 0, 1, 0, 9, 0],
+            [1, 1, 2, 2, 1, 0],
+            [1, 0, 3, 3, 0, 0],
+            [1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0] // Dangerous bottom
+        ];
+
+        const level2 = [
+            [8, 3, 1, 1, 1, 3],
+            [1, 0, 2, 0, 1, 1],
+            [1, 0, 2, 0, 0, 2],
+            [1, 1, 1, 3, 3, 1],
+            [3, 3, 0, 0, 0, 1],
+            [3, 3, 9, 1, 2, 1]
+        ];
+
+        let currentMap = level1;
+        let playerPos = { x: 0, y: 0 };
+        let levelNum = 1;
+
+        function loadLevel(map) {
+            currentMap = map;
+            gridEl.innerHTML = '';
+            gridEl.style.gridTemplateColumns = `repeat(${map[0].length}, 60px)`;
+
+            // Find start
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[0].length; x++) {
+                    if (map[y][x] === T_START) playerPos = { x, y };
+
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+
+                    // Assign class based on type
+                    let type = map[y][x];
+                    if (type === T_ROAD) cell.classList.add('type-road');
+                    if (type === T_SIDEWALK) cell.classList.add('type-sidewalk');
+                    if (type === T_Zebra) cell.classList.add('type-crosswalk');
+                    if (type === T_WALL) cell.classList.add('type-wall');
+                    if (type === T_START) cell.classList.add('type-start');
+                    if (type === T_END) cell.classList.add('type-end');
+
+                    if (type === T_END) cell.innerHTML = '<i class="fa-solid fa-school"></i>';
+
+                    cell.onclick = () => movePlayer(x, y);
+                    gridEl.appendChild(cell);
+                }
+            }
+            renderPlayer();
+        }
+
+        function renderPlayer() {
+            // Remove old player token
+            const old = document.querySelector('.player-token');
+            if (old) old.remove();
+
+            // Find current cell based on index
+            // Index = y * width + x
+            const index = playerPos.y * currentMap[0].length + playerPos.x;
+            const cell = gridEl.children[index];
+            cell.innerHTML = '<i class="fa-solid fa-person-walking player-token"></i>';
+        }
+
+        function movePlayer(x, y) {
+            // Check adjacency
+            const dy = Math.abs(playerPos.y - y);
+            const dx = Math.abs(playerPos.x - x);
+            if (dx + dy !== 1) return; // Only orthogonal 1 step
+
+            // Check content
+            const type = currentMap[y][x];
+
+            if (type === T_WALL) return; // Blocked
+
+            // Move
+            playerPos = { x, y };
+            renderPlayer();
+
+            if (type === T_ROAD) {
+                setTimeout(() => {
+                    alert("Қате! Автожолға шығу қауіпті. Ойын аяқталды.");
+                    resetLevel();
+                }, 100);
+            }
+            else if (type === T_END) {
+                setTimeout(() => {
+                    alert("Жарайсыз! Мектепке жеттіңіз!");
+                    if (levelNum === 1) {
+                        levelNum = 2;
+                        statusEl.innerText = 'Деңгей: 2';
+                        loadLevel(level2);
+                    } else {
+                        alert("Барлық деңгей өттіңіз!");
+                    }
+                }, 100);
+            }
+        }
+
+        function resetLevel() {
+            loadLevel(currentMap);
+        }
+
+        loadLevel(level1);
+
+    </script>
+
+</body>
+
+</html>
